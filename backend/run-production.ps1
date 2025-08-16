@@ -34,4 +34,4 @@ $serverPort = $env:PERSONEL_TAKIP_SERVER__PORT
 if (-not $serverPort) { $serverPort = '8000' }
 
 Write-Host ("Starting API on {0}:{1} in production mode..." -f $serverHost, $serverPort)
-uvicorn main:app --host $serverHost --port $serverPort --workers 2 --log-level info
+uvicorn main:app --host $serverHost --port $serverPort --workers 1 --log-level info
