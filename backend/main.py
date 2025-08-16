@@ -2777,9 +2777,14 @@ async def list_backups():
 
 # �👥 PERSONEL ENDPOINTS
 @app.get("/api/personnel")
-async def get_personnel():
+async def get_personnel(response: Response):
     """Tüm personel listesini döndürür"""
     try:
+        # Prevent client/proxy caching to avoid stale lists across users
+        response.headers["Cache-Control"] = (
+            "no-store, no-cache, must-revalidate, max-age=0"
+        )
+        response.headers["Pragma"] = "no-cache"
         return {
             "success": True,
             "data": personnel_data,
@@ -2872,6 +2877,12 @@ async def create_personnel(personnel: dict):
         with data_lock:
             personnel_data.append(new_personnel)
             personnel_index[new_id] = new_personnel
+
+        # Persist to disk so other sessions/instances get the update
+        try:
+            persist_data_to_disk()
+        except Exception:
+            pass
 
         print(f"✅ Personel eklendi: {new_personnel}")
         print(f"📊 Toplam personel sayısı: {len(personnel_data)}")
@@ -3001,6 +3012,12 @@ async def delete_personnel(personnel_id: int, request: Request = None):
         targets_data[:] = [t for t in targets_data if t["personnel_id"] != personnel_id]
         rebuild_targets_index()
 
+        # Persist to disk so deletion is reflected for all users
+        try:
+            persist_data_to_disk()
+        except Exception:
+            pass
+
         print(f"✅ Personel silindi: {personnel_to_delete.get('name')}")
 
         # Business event logla
@@ -3094,6 +3111,12 @@ async def update_personnel(personnel_id: int, personnel: dict, request: Request 
 
             # Index'te güncelle
             personnel_index[personnel_id] = updated_personnel
+
+        # Persist to disk so changes propagate
+        try:
+            persist_data_to_disk()
+        except Exception:
+            pass
 
         print(f"✅ Personel güncellendi: {updated_personnel}")
 
