@@ -1186,6 +1186,20 @@ def init_auth_db():
             )
             """
         )
+        # Persistent session store for auth tokens
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS sessions (
+                token TEXT PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                username TEXT NOT NULL,
+                role TEXT NOT NULL,
+                exp REAL NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            )
+            """
+        )
         conn.commit()
 
 
@@ -1336,6 +1350,48 @@ def count_users_db() -> int:
         return 0
 
 
+# --- Session helpers (persistent tokens) ---
+def _session_insert(token: str, user_id: int, username: str, role: str, exp_ts: float):
+    try:
+        with get_db_conn() as conn:
+            cur = conn.cursor()
+            cur.execute(
+                "INSERT OR REPLACE INTO sessions (token, user_id, username, role, exp, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    token,
+                    user_id,
+                    username,
+                    role,
+                    float(exp_ts),
+                    datetime.now().isoformat(),
+                ),
+            )
+            conn.commit()
+    except Exception as e:
+        slogger.log_error("DBError", f"session insert failed: {e}")
+
+
+def _session_get(token: str) -> Optional[dict]:
+    try:
+        with get_db_conn() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM sessions WHERE token = ? LIMIT 1", (token,))
+            row = cur.fetchone()
+            return dict(row) if row else None
+    except Exception:
+        return None
+
+
+def _session_delete(token: str):
+    try:
+        with get_db_conn() as conn:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM sessions WHERE token = ?", (token,))
+            conn.commit()
+    except Exception:
+        pass
+
+
 @app.on_event("startup")
 async def startup_init_users():
     try:
@@ -1371,6 +1427,17 @@ def issue_token(username: str, role: str = "admin", user_id: int | None = None) 
         "id": user_id,
         "exp": expires_at,
     }
+    # Persist session so tokens survive restarts (when DATA_DIR is on a volume)
+    try:
+        if user_id is None:
+            # Try to resolve user id if not provided
+            user = get_user_by_username(username)
+            if user:
+                user_id = int(user.get("id"))
+        if user_id is not None:
+            _session_insert(token, int(user_id), username, role, expires_at)
+    except Exception:
+        pass
     return token
 
 
@@ -1392,20 +1459,31 @@ async def verify_token(credentials: Optional[str] = Depends(security)) -> dict:
         )
 
     token = credentials.credentials
-    # Token presence
-    if token not in VALID_API_KEYS:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid authentication token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    # Token TTL kontrolü
-    info = VALID_API_KEYS[token]
+    # Fast path: in-memory cache
+    info = VALID_API_KEYS.get(token)
+    if not info:
+        # Slow path: check persistent session store
+        sess = _session_get(token)
+        if not sess:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid authentication token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        info = {
+            "role": sess.get("role", "admin"),
+            "name": sess.get("username"),
+            "id": sess.get("user_id"),
+            "exp": sess.get("exp"),
+        }
+        # rehydrate in-memory cache for performance
+        VALID_API_KEYS[token] = info
     exp = info.get("exp")
     if exp and time.time() > exp:
         # Expired: kaldır ve 401
         try:
             VALID_API_KEYS.pop(token, None)
+            _session_delete(token)
         finally:
             raise HTTPException(
                 status_code=401,
@@ -1414,6 +1492,27 @@ async def verify_token(credentials: Optional[str] = Depends(security)) -> dict:
             )
 
     return info
+
+
+# Optional logout endpoint to allow clients to invalidate tokens explicitly
+@app.post("/api/auth/logout")
+async def logout(credentials: Optional[str] = Depends(security)):
+    try:
+        token = credentials.credentials if credentials else None
+        if token:
+            VALID_API_KEYS.pop(token, None)
+            _session_delete(token)
+        return {
+            "success": True,
+            "data": {"logged_out": True},
+            "timestamp": datetime.now(),
+        }
+    except Exception:
+        return {
+            "success": True,
+            "data": {"logged_out": True},
+            "timestamp": datetime.now(),
+        }
 
 
 async def verify_admin_access(user: dict = Depends(verify_token)) -> dict:
