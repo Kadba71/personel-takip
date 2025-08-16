@@ -1,0 +1,9 @@
+# Force Python 3.11 on Railway Nixpacks and ensure modern packaging tools
+[providers.python]
+version = "3.11"
+
+[phases.install]
+cmds = [
+  "pip install --upgrade pip setuptools wheel",
+  "pip install -r requirements.txt"
+]
