@@ -1,0 +1,21 @@
+[build]
+# Force Dockerfile-based build
+builder = "dockerfile"
+
+dockerfilePath = "Dockerfile"
+# Optional: context path if not repo root
+context = "."
+
+[deploy]
+# Command is defined in Dockerfile CMD; leave empty
+startCommand = ""
+
+[watch]
+# Trigger deploys when these paths change
+paths = [
+  "Dockerfile",
+  "requirements.txt",
+  "backend/requirements.txt",
+  "backend/**",
+  "frontend/**"
+]
