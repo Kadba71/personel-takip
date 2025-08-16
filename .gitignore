@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pytest_cache/
+*.coverage
+*.log
+
+# Environments
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# SQLite and local data
+backend/auth.db
+backend/data_store.json
+backend/data_backup_*.pkl
+exports/
+backend/exports/
+
+# Node / frontend
+frontend-react/node_modules/
+frontend-react/dist/
+
+# OS
+.DS_Store
+Thumbs.db

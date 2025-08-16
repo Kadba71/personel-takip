@@ -1,0 +1,579 @@
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+/* BUTTON LOADING STATE STYLES */
+.btn-loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+    position: relative;
+}
+
+/* ===== Dashboard KPI Number Refinements ===== */
+/* Make top KPI numbers smaller, cleaner, and more professional */
+.stats-grid .stat-card .stat-info h3#totalPersonnel,
+.stats-grid .stat-card .stat-info h3#targetAchievement,
+.stats-grid .stat-card .stat-info h3#todayRecords {
+    font-size: 1.35rem !important;           /* smaller than default 2.5rem */
+    line-height: 1.05;
+    font-weight: 700 !important;            /* strong but not overly heavy */
+    letter-spacing: -0.01em;     /* subtle tightening */
+    margin-bottom: 0.25rem !important;
+    color: var(--dark-gray) !important;          /* dark text for light cards */
+    font-variant-numeric: tabular-nums; /* consistent numeral widths */
+    background: none !important;                 /* remove gradient text */
+    -webkit-text-fill-color: currentColor !important; /* ensure color applies */
+    text-shadow: none !important;                 /* remove heavy glow */
+    filter: none !important;
+}
+
+/* Explicitly disable neon glow animation for KPI numbers */
+#dashboard-page #totalPersonnel.neon-glow,
+#dashboard-page #targetAchievement.neon-glow,
+#dashboard-page #todayRecords.neon-glow,
+#dashboard-page #todayPerformance.neon-glow {
+    text-shadow: none !important;
+    animation: none !important;
+}
+
+/* Fine-tune sizes on smaller screens */
+@media (max-width: 992px) {
+    .stats-grid .stat-card .stat-info h3#totalPersonnel,
+    .stats-grid .stat-card .stat-info h3#targetAchievement,
+    .stats-grid .stat-card .stat-info h3#todayRecords {
+        font-size: 1.25rem !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .stats-grid .stat-card .stat-info h3#totalPersonnel,
+    .stats-grid .stat-card .stat-info h3#targetAchievement,
+    .stats-grid .stat-card .stat-info h3#todayRecords {
+        font-size: 1.15rem !important;
+        letter-spacing: 0;
+    }
+}
+
+/* ===== Dual-line KPI layout for the 2nd card (todayPerformance) ===== */
+h3#todayPerformance {
+    display: block !important;           /* ensure visible */
+    font-size: 1rem !important;          /* normal readable base */
+    font-weight: 500;                    /* lighter, avoid bold clutter */
+    margin-bottom: 0.15rem !important;
+}
+
+/* ===== Dashboard summary table (below KPIs) ===== */
+#dashboardSummaryTable {
+    width: 100%;
+}
+#dashboardSummaryTable thead th {
+    position: sticky;
+    top: 0;
+    background: rgba(102, 126, 234, 0.08);
+}
+#dashboardSummaryTable td, #dashboardSummaryTable th {
+    white-space: nowrap;
+}
+#dashboardSummaryTable th.sortable {
+    cursor: pointer;
+    user-select: none;
+    position: sticky;
+}
+#dashboardSummaryTable th .sort-arrows {
+    display: inline-flex;
+    flex-direction: column;
+    margin-left: 6px;
+    font-size: 0.8em;
+    opacity: 0.45;
+}
+#dashboardSummaryTable th.active .sort-arrows { opacity: 1; }
+#dashboardSummaryTable th.active.asc .arrow-up { color: #111; font-weight: 700; }
+#dashboardSummaryTable th.active.desc .arrow-down { color: #111; font-weight: 700; }
+#dashboardSummaryTable th .arrow-up,
+#dashboardSummaryTable th .arrow-down {
+    line-height: 0.8;
+}
+#dashboardSummaryTable td:nth-child(2) {
+    min-width: 180px;
+}
+/* Make team chips readable on light cards */
+.chart-card .team-chip.team-glass {
+    background: rgba(0,0,0,0.04);
+    color: #111;
+    border-color: rgba(0,0,0,0.08);
+}
+
+/* ===== Full-bleed layout for dashboard bottom area ===== */
+#dashboard-page .dashboard-charts .chart-card.full-width {
+    /* Expand to viewport width regardless of main-content max-width */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+}
+
+/* Keep inner table scrollable if still too wide */
+#dashboard-page .dashboard-charts .chart-card.full-width .table-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+    #dashboard-page .dashboard-charts .chart-card.full-width {
+        border-radius: 0;
+    }
+}
+
+h3#todayPerformance .kpi-dual {
+    display: grid;
+    grid-auto-rows: minmax(18px, auto);
+    gap: 4px;
+}
+
+h3#todayPerformance .kpi-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+h3#todayPerformance .kpi-label {
+    font-size: 0.95rem;                 /* same visual tone as adjacent label */
+    font-weight: 500;
+    color: #111 !important;             /* force black for visibility */
+    -webkit-text-fill-color: #111 !important;
+    text-shadow: none !important;
+    opacity: 1;
+}
+
+h3#todayPerformance .kpi-value {
+    font-size: 1.35rem;                 /* match other KPI numbers */
+    font-weight: 700;
+    color: #111 !important;             /* force black for visibility */
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+    background: none !important;        /* remove gradient text if any */
+    -webkit-text-fill-color: #111 !important;
+    text-shadow: none !important;
+    filter: none !important;
+}
+
+@media (max-width: 992px) {
+    h3#todayPerformance .kpi-label { font-size: 0.85rem; }
+    h3#todayPerformance .kpi-value { font-size: 1.25rem; }
+}
+
+@media (max-width: 600px) {
+    h3#todayPerformance .kpi-label { font-size: 0.8rem; }
+    h3#todayPerformance .kpi-value { font-size: 1.15rem; }
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: btn-spin 1s linear infinite;
+}
+
+@keyframes btn-spin {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* MODAL IMPROVEMENTS */
+.modal-overlay {
+    backdrop-filter: blur(2px);
+    transition: backdrop-filter 0.3s ease;
+}
+
+.modal {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-bottom: none;
+}
+
+.modal-close {
+    color: white;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.modal-close:hover {
+    opacity: 1;
+    color: white;
+}
+
+/* FORM VALIDATION STYLES */
+.form-group.error input,
+.form-group.error select,
+.form-group.error textarea {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-group.success input,
+.form-group.success select,
+.form-group.success textarea {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* IMPROVED TOAST NOTIFICATIONS */
+.toast {
+    min-width: 300px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: none;
+    border-radius: 8px;
+}
+
+.toast.success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.toast.error {
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+    color: white;
+}
+
+.toast.info {
+    background: linear-gradient(135deg, #17a2b8, #3498db);
+    color: white;
+}
+
+/* PROFESSIONAL BUTTON STYLES */
+.btn {
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+}
+
+.btn-success:hover:not(:disabled) {
+    background: linear-gradient(135deg, #218838, #1c9d7e);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+    border: none;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: linear-gradient(135deg, #c82333, #d62c1a);
+}
+
+/* TABLE IMPROVEMENTS */
+.table {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.001);
+    transition: all 0.2s ease;
+}
+
+/* NAVIGATION IMPROVEMENTS */
+.nav-link {
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    backdrop-filter: blur(10px);
+}
+
+.nav-link.disabled {
+    opacity: 0.5;
+    filter: grayscale(0.3);
+}
+
+/* CARD IMPROVEMENTS */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 12px 12px 0 0 !important;
+    font-weight: 600;
+}
+
+/* FORM IMPROVEMENTS */
+.form-control {
+    border-radius: 6px;
+    border: 2px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: scale(1.005);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* RESPONSIVE IMPROVEMENTS */
+@media (max-width: 768px) {
+    .btn {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .modal {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+    
+    .table {
+        font-size: 0.875rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* LOADING SPINNER */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* STATUS BADGES */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.badge-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.badge-danger {
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+    color: white;
+}
+
+.badge-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: #212529;
+}
+
+.badge-info {
+    background: linear-gradient(135deg, #17a2b8, #3498db);
+    color: white;
+}
+
+/* ===== Puantaj (Attendance) Table Styles ===== */
+#attendanceTableContainer {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+table.attendance-table {
+    table-layout: fixed;
+}
+
+table.attendance-table thead th,
+table.attendance-table tbody td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 6px 8px;
+}
+
+table.attendance-table thead th.sticky-col,
+table.attendance-table tbody td.sticky-col {
+    position: sticky;
+    left: 0;
+    background: #fff;
+    z-index: 2;
+    text-align: left;
+    min-width: 220px;
+}
+
+table.attendance-table tbody td.sticky-col { z-index: 1; }
+
+/* Presence markers */
+table.attendance-table td.present-day {
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-weight: 700;
+}
+table.attendance-table td.after-hours {
+    background: #e3f2fd;
+    color: #1565c0;
+    font-weight: 700;
+}
+table.attendance-table td.present-both {
+    background: #ede7f6;
+    color: #5e35b1;
+    font-weight: 700;
+}
+table.attendance-table td.absent {
+    background: #fafafa;
+}
+
+table.attendance-table td.total-col {
+    font-weight: 700;
+}
+
+/* New visual states for numeric puantaj */
+table.attendance-table td.half-day {
+    background: #fff8e1; /* light amber */
+    color: #8d6e63;
+    font-weight: 700;
+}
+table.attendance-table td.future-day {
+    background: #f9f9f9;
+    color: #bbb;
+}
+/* Subtle marker when there is after-hours on that day */
+table.attendance-table td.after-hours-flag {
+    position: relative;
+}
+table.attendance-table td.after-hours-flag::after {
+    content: '';
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-top: 6px solid #1565c0; /* blue corner */
+    opacity: 0.8;
+}
+
+/* ===== Professional Login Page ===== */
+#login-page .data-card {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(31, 38, 135, 0.25);
+}
+
+#login-page .card-header {
+    background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.15));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px 16px 0 0 !important;
+}
+
+#login-page .form-group label {
+    font-weight: 600;
+    color: #f0f0f0;
+}
+
+#login-page .form-group input[type="text"],
+#login-page .form-group input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+#login-page .form-group input:focus {
+    border-color: #8aa0ff;
+    box-shadow: 0 0 0 0.15rem rgba(102, 126, 234, 0.35);
+}
+
+#login-page .btn.btn-primary {
+    min-width: 140px;
+}
+
+#login-page .page-header h2 {
+    color: #fff;
+}
