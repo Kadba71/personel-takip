@@ -7,6 +7,9 @@ __pycache__/
 *.coverage
 *.log
 
+# Virtual environments
+.venv/
+
 # Environments
 .env
 .env.*
@@ -19,6 +22,9 @@ backend/data_store.json
 backend/data_backup_*.pkl
 exports/
 backend/exports/
+
+# Excel exports
+backend/*.xlsx
 
 # Node / frontend
 frontend-react/node_modules/
